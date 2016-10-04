@@ -95,10 +95,22 @@ public class UserTest {
                 .next()
                 .getMessage());
     }
-    
+
     @Test
-    public void passwordIsNull(){
-        
+    public void passwordIsNull() {
+        User user = new User("Coda", null);
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_NOT_NULL, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
+    }
+
+    @Test
+    public void constructorOK() {
+        User user = new User("Coda", "1");
     }
 
     /**

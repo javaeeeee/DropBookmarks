@@ -58,8 +58,8 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT b FROM Bookmark b "
             + "WHERE b.description = :description"),
     @NamedQuery(name = "Bookmark.findByUserId",
-            query = "SELECT b FROM Bookmark b WHERE b.user.userId = :userId"),
-@NamedQuery(name = "Bookmark.remove", query = "REMOVE FROM Bookmark b "
+            query = "SELECT b FROM Bookmark b WHERE b.user.id = :id"),
+@NamedQuery(name = "Bookmark.remove", query = "DELETE FROM Bookmark b "
         + "where b.id = :id")})
 public class Bookmark implements Serializable {
 
