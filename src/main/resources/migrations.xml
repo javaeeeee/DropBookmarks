@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+The MIT License
+
+Copyright 2016 Dmitry Noranovich javaeeeee at gmail dot com.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+-->
+
+
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog/1.7"
+                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog/1.7
+         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-1.7.xsd">
+    
+    <changeSet id="1" author="javaeeeee">
+        <comment>A script to create a users table</comment>
+        <createTable tableName="users">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="username" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    
+    <changeSet id="2" author="javaeeeee">
+        <comment>A script to create a bookmarks table</comment>
+        <createTable tableName="bookmarks">
+            <column name="id"  type="bigint" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(1024)" >
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="varchar(2048)"/>
+            <column name="user_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="bookmarks"
+                                 constraintName="fk_users_id"
+                                 referencedTableName="users"
+                                 referencedColumnNames="id"/>
+    </changeSet>
+    
+    <changeSet id="3" author="javaeeeee" context="DEV">
+        <insert tableName="users">
+            <column name="id" value="1"/>
+            <column name="username" value="javaeeeee"/>
+            <column name="password" value="p@ssw0rd"/>
+        </insert>
+        <rollback>
+            <delete tableName="users">
+                <where>
+                    id=1
+                </where>
+            </delete>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="4" author="javaeeeee" context="TEST">
+        <insert tableName="users">
+            <column name="id" value="1"/>
+            <column name="username" value="javaeeeee"/>
+            <column name="password" value="p@ssw0rd"/>
+        </insert>
+        <insert tableName="users">
+            <column name="id" value="2"/>
+            <column name="username" value="javaeeeee"/>
+            <column name="password" value="p@ssw0rd"/>
+        </insert>
+        <rollback>
+            <delete tableName="users">
+                <where>
+                    id in (1, 2)
+                </where>
+            </delete>
+        </rollback>
+    </changeSet>
+    
+    <changeSet id="5" author="javaeeeee" context="TEST">
+        <insert tableName="bookmarks">
+            <column name="id" value="1"/>
+            <column name="name" value="Dropwizard"/>
+            <column name="url" value="https://dropwizard.github.io/dropwizard/getting-started.html"/>
+            <column name="description" value="Dropwizard Getting Started"/>
+            <column name="user_id" value="1"/>
+        </insert>
+        <insert tableName="bookmarks">
+            <column name="id" value="2"/>
+            <column name="name" value="Session"/>
+            <column name="url" value="https://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/context/ManagedSessionContext.html"/>
+            <column name="description" value="Hibernate Docs"/>
+            <column name="user_id" value="1"/>
+        </insert>
+        <insert tableName="bookmarks">
+            <column name="id" value="3"/>
+            <column name="name" value="w3schools"/>
+            <column name="url" value="http://www.w3schools.com/sql/sql_in.asp"/>
+            <column name="description" value="SQL Tutorial"/>
+            <column name="user_id" value="2"/>
+        </insert>
+        <rollback>
+            <delete tableName="bookmarks">
+                <where>
+                    id in (1, 2, 3)
+                </where>
+            </delete>
+        </rollback>
+    </changeSet>
+</databaseChangeLog>

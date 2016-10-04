@@ -25,10 +25,14 @@ package com.javaeeeee.dropbookmarks;
 
 import com.javaeeeee.dropbookmarks.core.Bookmark;
 import com.javaeeeee.dropbookmarks.core.User;
+import com.javaeeeee.dropbookmarks.db.BookmarkDAO;
+import com.javaeeeee.dropbookmarks.db.UserDAO;
 import io.dropwizard.Application;
+import io.dropwizard.Configuration;
 import io.dropwizard.db.DataSourceFactory;
 import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
+import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 
@@ -65,15 +69,27 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
     @Override
     public void initialize(final Bootstrap<DropBookmarksConfiguration> bootstrap) {
         /**
-         * Add Hibernate bundle.
+         * Adding Hibernate bundle.
          */
         bootstrap.addBundle(hibernateBundle);
+        /**
+         * Adding migrations bundle.
+         */
+        bootstrap.addBundle(new MigrationsBundle<DropBookmarksConfiguration>() {
+            @Override
+            public DataSourceFactory getDataSourceFactory(DropBookmarksConfiguration configuration) {
+                return configuration.getDataSourceFactory();
+            }
+        });
     }
 
     @Override
     public void run(final DropBookmarksConfiguration configuration,
             final Environment environment) {
-        // TODO: implement application
+        final UserDAO userDAO
+                = new UserDAO(hibernateBundle.getSessionFactory());
+        final BookmarkDAO bookmarkDAO
+                = new BookmarkDAO(hibernateBundle.getSessionFactory());
     }
 
 }

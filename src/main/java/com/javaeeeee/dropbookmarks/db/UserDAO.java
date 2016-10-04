@@ -55,7 +55,7 @@ public class UserDAO extends AbstractDAO<User> {
      *
      * @param username username used for login.
      * @param password password of a user.
-     * @return
+     * @return An Optional containing the user if found or empty otherwise.
      */
     public Optional<User> findByUsernameAndPassword(
             String username,

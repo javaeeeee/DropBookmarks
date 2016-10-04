@@ -11,7 +11,7 @@ database:
     password: 1234
     
     # the JDBC URL
-    url: jdbc:mysql://localhost:3306/bookmarks
+    url: jdbc:mysql://localhost:3306/dropbookmarks
     
 logging:
   level: INFO
