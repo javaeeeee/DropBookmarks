@@ -95,6 +95,11 @@ public class UserTest {
                 .next()
                 .getMessage());
     }
+    
+    @Test
+    public void passwordIsNull(){
+        
+    }
 
     /**
      * Test of getUsername method, of class User.
