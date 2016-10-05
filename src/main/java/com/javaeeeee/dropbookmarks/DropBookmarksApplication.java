@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Dmitry Noranovich <javaeeeee at gmail dot com>.
+ * Copyright 2016 Dmitry Noranovich <javaeeeee (at) gmail (dot) com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -39,7 +39,7 @@ import io.dropwizard.setup.Environment;
 /**
  * Dropwizard Application class.
  *
- * @author Dmitry Noranovich javaeeeee at gmail dot com
+ * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 public class DropBookmarksApplication extends Application<DropBookmarksConfiguration> {
 

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Dmitry Noranovich <javaeeeee at gmail dot com>.
+ * Copyright 2016 Dmitry Noranovich <javaeeeee (at) gmail (dot) com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -42,10 +42,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Dmitry Noranovich javaeeeee at gmail dot com
+ * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 @Entity
-@Table(name = "bookmarks", catalog = "bookmarks", schema = "")
+@Table(name = "bookmarks")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "Bookmark.findAll",

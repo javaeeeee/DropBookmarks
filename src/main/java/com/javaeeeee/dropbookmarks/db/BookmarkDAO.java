@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Dmitry Noranovich <javaeeeee at gmail dot com>.
+ * Copyright 2016 Dmitry Noranovich <javaeeeee (at) gmail (dot) com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import org.hibernate.SessionFactory;
 /**
  * Data Access Object to manipulate bookmarks.
  *
- * @author Dmitry Noranovich javaeeeee at gmail dot com
+ * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 public class BookmarkDAO extends AbstractDAO<Bookmark> {
 
@@ -46,7 +46,7 @@ public class BookmarkDAO extends AbstractDAO<Bookmark> {
      * @param id the id of the user.
      * @return List of all bookmarks stored by the user identified by id.
      */
-    public List<Bookmark> findByUserId(long id) {
+    public List<Bookmark> findByUserId(int id) {
         return list(namedQuery("Bookmark.findAll"));
     }
 
@@ -57,7 +57,7 @@ public class BookmarkDAO extends AbstractDAO<Bookmark> {
      * @return An Optional with a bookmark if found and an empty Optional
      * otherwise.
      */
-    public Optional<Bookmark> findById(long id) {
+    public Optional<Bookmark> findById(int id) {
         return Optional.ofNullable(get(id));
     }
 
@@ -74,13 +74,11 @@ public class BookmarkDAO extends AbstractDAO<Bookmark> {
     /**
      * Method removes the bookmark from the database.
      *
-     * @param bookmark a bookmark to remove.
-     * @return the removed bookmark.
+     * @param id the id of the bookmark to be deleted.
      */
-    public Bookmark delete(Bookmark bookmark) {
+    public void delete(Integer id) {
         namedQuery("Bookmark.remove")
-                .setParameter("id", bookmark.getId())
+                .setParameter("id", id)
                 .executeUpdate();
-        return bookmark;
     }
 }

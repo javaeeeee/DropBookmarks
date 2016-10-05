@@ -2,7 +2,7 @@
 <!--
 The MIT License
 
-Copyright 2016 Dmitry Noranovich javaeeeee at gmail dot com.
+Copyright 2016 Dmitry Noranovich javaeeeee (at) gmail (dot) com.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -49,9 +49,6 @@ THE SOFTWARE.
         <createTable tableName="bookmarks">
             <column name="id"  type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="name" type="varchar(255)">
-                <constraints nullable="false"/>
             </column>
             <column name="url" type="varchar(1024)" >
                 <constraints nullable="false"/>
@@ -106,21 +103,18 @@ THE SOFTWARE.
     <changeSet id="5" author="javaeeeee" context="TEST">
         <insert tableName="bookmarks">
             <column name="id" value="1"/>
-            <column name="name" value="Dropwizard"/>
             <column name="url" value="https://dropwizard.github.io/dropwizard/getting-started.html"/>
             <column name="description" value="Dropwizard Getting Started"/>
             <column name="user_id" value="1"/>
         </insert>
         <insert tableName="bookmarks">
             <column name="id" value="2"/>
-            <column name="name" value="Session"/>
             <column name="url" value="https://docs.jboss.org/hibernate/orm/3.5/api/org/hibernate/context/ManagedSessionContext.html"/>
             <column name="description" value="Hibernate Docs"/>
             <column name="user_id" value="1"/>
         </insert>
         <insert tableName="bookmarks">
             <column name="id" value="3"/>
-            <column name="name" value="w3schools"/>
             <column name="url" value="http://www.w3schools.com/sql/sql_in.asp"/>
             <column name="description" value="SQL Tutorial"/>
             <column name="user_id" value="2"/>

@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Dmitry Noranovich <javaeeeee at gmail dot com>.
+ * Copyright 2016 Dmitry Noranovich <javaeeeee (at) gmail (dot) com>.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -38,16 +38,17 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author Dmitry Noranovich javaeeeee at gmail dot com
+ * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 @Entity
-@Table(name = "users", catalog = "bookmarks", schema = "")
+@Table(name = "users")
 @XmlRootElement
 @NamedQueries({
     @NamedQuery(name = "User.findAll", query = "SELECT u FROM User u"),
@@ -136,8 +137,7 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(this.id,
                 this.username,
-                this.password,
-                this.bookmarks);
+                this.password);
     }
 
     @Override
@@ -154,8 +154,7 @@ public class User implements Serializable {
         final User other = (User) obj;
         return Objects.equals(this.username, other.username)
                 && Objects.equals(this.password, other.password)
-                && Objects.equals(this.id, other.id)
-                && Objects.equals(this.bookmarks, other.bookmarks);
+                && Objects.equals(this.id, other.id);
     }
 
     @Override

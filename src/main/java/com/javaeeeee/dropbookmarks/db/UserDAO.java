@@ -1,7 +1,7 @@
 /*
  * The MIT License
  *
- * Copyright 2016 Dmitry Noranovich javaeeeee at gmail dot com.
+ * Copyright 2016 Dmitry Noranovich javaeeeee (at) gmail (dot) com.
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -32,7 +32,7 @@ import org.hibernate.SessionFactory;
 /**
  * Data Access Object to manipulate users.
  *
- * @author Dmitry Noranovich javaeeeee at gmail dot com
+ * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 public class UserDAO extends AbstractDAO<User> {
 
@@ -67,5 +67,15 @@ public class UserDAO extends AbstractDAO<User> {
                         .setParameter("username", username)
                         .setParameter("password", password)
                 ));
+    }
+
+    /**
+     * A method that finds a user by id. Used for testing purposes.
+     *
+     * @param id the id of a user.
+     * @return The user characterized by the id passed to the method.
+     */
+    Optional<User> findById(Integer id) {
+        return Optional.ofNullable(get(id));
     }
 }
