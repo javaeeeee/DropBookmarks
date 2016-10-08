@@ -56,9 +56,9 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByUsernameAndPassword",
             query = "SELECT u FROM User u WHERE u.username = :username "
-                    + "and u.password = :password")})
+            + "and u.password = :password")})
 public class User implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -92,33 +92,33 @@ public class User implements Serializable {
      */
     public User() {
     }
-
+    
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
-
+    
     public Integer getId() {
         return id;
     }
-
+    
     public void setId(Integer id) {
         Objects.requireNonNull(id);
         this.id = id;
     }
-
+    
     public String getUsername() {
         return username;
     }
-
+    
     public void setUsername(String username) {
         this.username = username;
     }
-
+    
     public String getPassword() {
         return password;
     }
-
+    
     public void setPassword(String password) {
         this.password = password;
     }
@@ -129,17 +129,27 @@ public class User implements Serializable {
      * @param bookmark a bookmark to add.
      */
     public void addBookmark(Bookmark bookmark) {
+        Objects.requireNonNull(bookmark);
         bookmark.setUser(this);
         bookmarks.add(bookmark);
     }
 
+    /**
+     * Getter for bookmark list.
+     *
+     * @return the list by bookmarks stored by a user.
+     */
+    public Set<Bookmark> getBookmarks() {
+        return bookmarks;
+    }
+    
     @Override
     public int hashCode() {
         return Objects.hash(this.id,
                 this.username,
                 this.password);
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -156,7 +166,7 @@ public class User implements Serializable {
                 && Objects.equals(this.password, other.password)
                 && Objects.equals(this.id, other.id);
     }
-
+    
     @Override
     public String toString() {
         return "User{" + "id=" + id + ", username=" + username
@@ -164,5 +174,5 @@ public class User implements Serializable {
                 + ", bookmarks=" + Objects.toString(bookmarks)
                 + '}';
     }
-
+    
 }

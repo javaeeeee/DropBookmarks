@@ -23,6 +23,7 @@
  */
 package com.javaeeeee.dropbookmarks.core;
 
+import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -111,62 +112,214 @@ public class UserTest {
     @Test
     public void constructorOK() {
         User user = new User("Coda", "1");
-    }
 
-    /**
-     * Test of getUsername method, of class User.
-     */
-    @Test
-    public void testGetUsername() {
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertTrue(constraintViolations.isEmpty());
     }
 
     /**
      * Test of setUsername method, of class User.
      */
     @Test
-    public void testSetUsername() {
+    public void testSetUsernameIsNull() {
+        User user = new User("Coda", "1");
+        user.setUsername(null);
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_NOT_NULL, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
     }
 
     /**
-     * Test of getPassword method, of class User.
+     * Test of setUsername method, of class User.
      */
     @Test
-    public void testGetPassword() {
+    public void testSetUsernameIsEmpty() {
+        User user = new User("Coda", "1");
+        user.setUsername("");
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_LENGTH, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
+    }
+
+    /**
+     * Test of setUsername method, of class User.
+     */
+    @Test
+    public void testSetUsernameIsOk() {
+        User user = new User("Coda", "1");
+        user.setUsername("Phil");
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertTrue(constraintViolations.isEmpty());
     }
 
     /**
      * Test of setPassword method, of class User.
      */
     @Test
-    public void testSetPassword() {
+    public void testSetPasswordIsNull() {
+        User user = new User("Coda", "1");
+        user.setPassword(null);
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_NOT_NULL, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
+    }
+
+    /**
+     * Test of setPassword method, of class User.
+     */
+    @Test
+    public void testSetPasswordIsEmpty() {
+        User user = new User("Coda", "1");
+        user.setPassword("");
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_LENGTH, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
+    }
+
+    /**
+     * Test of setPassword method, of class User.
+     */
+    @Test
+    public void testSetPasswordIsOk() {
+        User user = new User("Coda", "1");
+        user.setPassword("2");
+
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertTrue(constraintViolations.isEmpty());
+    }
+
+    /**
+     * Test of addBookmark method, of class User.
+     */
+    @Test(expected = NullPointerException.class)
+    public void testAddBookmark() {
+        User user = new User("Coda", "1");
+        user.addBookmark(null);
     }
 
     /**
      * Test of addBookmark method, of class User.
      */
     @Test
-    public void testAddBookmark() {
-    }
+    public void testAddBookmarkIsNull() {
+        User user = new User("Coda", "1");
+        user.addBookmark(new Bookmark());
+        int expectedId = 1;
+        user.setId(expectedId);
 
-    /**
-     * Test of hashCode method, of class User.
-     */
-    @Test
-    public void testHashCode() {
+        Set<ConstraintViolation<User>> constraintViolations
+                = validator.validate(user);
+
+        assertTrue(constraintViolations.isEmpty());
+
+        Bookmark bookmark = user.getBookmarks().iterator().next();
+
+        assertEquals(expectedId, bookmark.getUser().getId().intValue());
     }
 
     /**
      * Test of equals method, of class User.
      */
     @Test
-    public void testEquals() {
+    public void testEqualsOtherIsNull() {
+        User user = new User("Coda", "1");
+        assertFalse(user.equals(null));
+        assertNotEquals(user.hashCode(), Objects.hashCode(null));
     }
 
     /**
-     * Test of toString method, of class User.
+     * Test of equals method, of class User.
      */
     @Test
-    public void testToString() {
+    public void testEqualsOtherIsSame() {
+        User user = new User("Coda", "1");
+        assertTrue(user.equals(user));
     }
 
+    /**
+     * Test of equals method, of class User.
+     */
+    @Test
+    public void testEqualsOtherIsBookmark() {
+        User user = new User("Coda", "1");
+        assertFalse(user.equals(new Bookmark()));
+    }
+
+    /**
+     * Test of equals method, of class User.
+     */
+    @Test
+    public void testEqualsAnotherUser() {
+        User user = new User("Coda", "1");
+        User other = new User();
+        assertFalse(user.equals(other));
+        assertNotEquals(user.hashCode(), other.hashCode());
+    }
+
+    /**
+     * Test of equals method, of class User.
+     */
+    @Test
+    public void testEqualsOk() {
+        User user = new User("Coda", "1");
+        int expectedId = 1;
+        user.setId(expectedId);
+        User other = new User("Coda", "1");
+        other.setId(expectedId);
+        assertTrue(user.equals(other));
+        assertEquals(user.hashCode(), other.hashCode());
+    }
+
+    /**
+     * Test of equals method, of class User.
+     */
+    @Test
+    public void testEqualsIdIsNull() {
+        User user = new User("Coda", "1");
+        User other = new User("Coda", "1");
+        assertTrue(user.equals(other));
+        assertEquals(user.hashCode(), other.hashCode());
+    }
+
+    /**
+     * Test of equals method, of class User.
+     */
+    @Test
+    public void testEqualsOtherIdIsNull() {
+        User user = new User("Coda", "1");
+        int expectedId = 1;
+        user.setId(expectedId);
+        User other = new User("Coda", "1");
+        assertFalse(user.equals(other));
+        assertNotEquals(user.hashCode(), other.hashCode());
+    }
 }
