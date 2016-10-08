@@ -23,6 +23,8 @@
  */
 package com.javaeeeee.dropbookmarks.core;
 
+import java.util.Set;
+import javax.validation.ConstraintViolation;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -30,86 +32,135 @@ import static org.junit.Assert.*;
  *
  * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
-public class BookmarkTest {
-    
-    public BookmarkTest() {
-    }
+public class BookmarkTest extends EntityTest {
 
-    /**
-     * Test of getId method, of class Bookmark.
-     */
-    @Test
-    public void testGetId() {
+    public BookmarkTest() {
     }
 
     /**
      * Test of setId method, of class Bookmark.
      */
-    @Test
-    public void testSetId() {
-    }
-
-    /**
-     * Test of getUrl method, of class Bookmark.
-     */
-    @Test
-    public void testGetUrl() {
+    @Test(expected = NullPointerException.class)
+    public void testSetIdIsNull() {
+        Bookmark bookmark = new Bookmark();
+        bookmark.setId(null);
     }
 
     /**
      * Test of setUrl method, of class Bookmark.
      */
     @Test
-    public void testSetUrl() {
+    public void testSetUrlIsNull() {
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl(null);
+
+        Set<ConstraintViolation<Bookmark>> constraintViolations
+                = validator.validate(bookmark);
+
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_NOT_NULL, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
     }
 
     /**
-     * Test of getDescription method, of class Bookmark.
+     * Test of setUrl method, of class Bookmark.
      */
     @Test
-    public void testGetDescription() {
-    }
+    public void testSetUrlIsEmpty() {
+        Bookmark bookmark = new Bookmark();
+        bookmark.setUrl("");
 
-    /**
-     * Test of setDescription method, of class Bookmark.
-     */
-    @Test
-    public void testSetDescription() {
-    }
+        Set<ConstraintViolation<Bookmark>> constraintViolations
+                = validator.validate(bookmark);
 
-    /**
-     * Test of getUser method, of class Bookmark.
-     */
-    @Test
-    public void testGetUser() {
-    }
-
-    /**
-     * Test of setUser method, of class Bookmark.
-     */
-    @Test
-    public void testSetUser() {
-    }
-
-    /**
-     * Test of hashCode method, of class Bookmark.
-     */
-    @Test
-    public void testHashCode() {
+        assertFalse(constraintViolations.isEmpty());
+        assertEquals(ERROR_LENGTH, constraintViolations
+                .iterator()
+                .next()
+                .getMessage());
     }
 
     /**
      * Test of equals method, of class Bookmark.
      */
     @Test
-    public void testEquals() {
+    public void testEqualsNull() {
+        String expectedURL = "https://github.com/javaeeeee/DropBookmarks";
+        Bookmark bookmark = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+        Bookmark other = null;
+
+        assertFalse(bookmark.equals(other));
     }
 
     /**
-     * Test of toString method, of class Bookmark.
+     * Test of equals method, of class Bookmark.
      */
     @Test
-    public void testToString() {
+    public void testEqualsSame() {
+        String expectedURL = "https://github.com/javaeeeee/DropBookmarks";
+        Bookmark bookmark = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+        Bookmark other = bookmark;
+
+        assertTrue(bookmark.equals(other));
+
     }
-    
+
+    /**
+     * Test of equals method, of class Bookmark.
+     */
+    @Test
+    public void testEqualsUser() {
+        String expectedURL = "https://github.com/javaeeeee/DropBookmarks";
+        Bookmark bookmark = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+
+        assertFalse(bookmark.equals(new User()));
+    }
+
+    /**
+     * Test of equals method, of class Bookmark.
+     */
+    @Test
+    public void testEqualsOk() {
+        String expectedURL = "https://github.com/javaeeeee/DropBookmarks";
+        Bookmark bookmark = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+        Bookmark other = new Bookmark(
+                expectedURL,
+                "Project Repository URL");;
+
+        assertTrue(bookmark.equals(other));
+
+    }
+
+    /**
+     * Test of equals method, of class Bookmark.
+     */
+    @Test
+    public void testEqualsUsersNotEqual() {
+        String expectedURL = "https://github.com/javaeeeee/DropBookmarks";
+        Bookmark bookmark = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+        User u1 = new User();
+        u1.setId(1);
+        bookmark.setUser(u1);
+        Bookmark other = new Bookmark(
+                expectedURL,
+                "Project Repository URL");
+        User u2 = new User();
+        u2.setId(2);
+        other.setUser(u2);
+
+        assertFalse(bookmark.equals(other));
+    }
+
 }

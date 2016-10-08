@@ -39,30 +39,7 @@ import org.junit.BeforeClass;
  *
  * http://hibernate.org/validator/documentation/getting-started/
  */
-public class UserTest {
-
-    /**
-     * Validation error message if value is null.
-     */
-    private static final String ERROR_NOT_NULL = "may not be null";
-    /**
-     * Validation error message if string argument length is incorrect.
-     */
-    private static final String ERROR_LENGTH = "size must be between 1 and 255";
-
-    /**
-     * Validator used for testing purposes.
-     */
-    private static Validator validator;
-
-    /**
-     * Do initialization.
-     */
-    @BeforeClass
-    public static void setUpClass() {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        validator = factory.getValidator();
-    }
+public class UserTest extends EntityTest {
 
     /**
      * Test of setId method, of class User.

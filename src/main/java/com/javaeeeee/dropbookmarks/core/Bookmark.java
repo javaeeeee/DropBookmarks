@@ -59,10 +59,10 @@ import javax.xml.bind.annotation.XmlRootElement;
             + "WHERE b.description = :description"),
     @NamedQuery(name = "Bookmark.findByUserId",
             query = "SELECT b FROM Bookmark b WHERE b.user.id = :id"),
-@NamedQuery(name = "Bookmark.remove", query = "DELETE FROM Bookmark b "
-        + "where b.id = :id")})
+    @NamedQuery(name = "Bookmark.remove", query = "DELETE FROM Bookmark b "
+            + "where b.id = :id")})
 public class Bookmark implements Serializable {
-
+    
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -90,47 +90,48 @@ public class Bookmark implements Serializable {
     @JsonIgnore
     @ManyToOne
     private User user;
-
+    
     public Bookmark() {
     }
-
+    
     public Bookmark(String url, String description) {
         this.url = url;
         this.description = description;
     }
-
+    
     public Integer getId() {
         return id;
     }
-
+    
     public void setId(Integer id) {
+        Objects.requireNonNull(id);
         this.id = id;
     }
-
+    
     public String getUrl() {
         return url;
     }
-
+    
     public void setUrl(String url) {
         this.url = url;
     }
-
+    
     public String getDescription() {
         return description;
     }
-
+    
     public void setDescription(String description) {
         this.description = description;
     }
-
+    
     public User getUser() {
         return user;
     }
-
+    
     public void setUser(User user) {
         this.user = user;
     }
-
+    
     @Override
     public int hashCode() {
         return Objects.hash(this.id,
@@ -138,7 +139,7 @@ public class Bookmark implements Serializable {
                 this.description,
                 this.user);
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -156,12 +157,12 @@ public class Bookmark implements Serializable {
                 && Objects.equals(this.description, other.description)
                 && Objects.equals(this.id, other.id);
     }
-
+    
     @Override
     public String toString() {
         return "Bookmark{" + "id=" + id + ", url=" + url
                 + ", description=" + description
                 + ", user=" + Objects.toString(user) + '}';
     }
-
+    
 }
