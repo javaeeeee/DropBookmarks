@@ -36,6 +36,11 @@ import org.hibernate.SessionFactory;
  */
 public class BookmarkDAO extends AbstractDAO<Bookmark> {
 
+    /**
+     * Constructor that initializes bookmarks DAO.
+     *
+     * @param sessionFactory Hibernate Session Factory.
+     */
     public BookmarkDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
     }
@@ -59,6 +64,25 @@ public class BookmarkDAO extends AbstractDAO<Bookmark> {
      */
     public Optional<Bookmark> findById(int id) {
         return Optional.ofNullable(get(id));
+    }
+
+    /**
+     * Method looks for the bookmark characterized by id for a user
+     * characterized by userId.
+     *
+     * @param id the id of a bookmark to look for.
+     * @param userId the id of the user owner of the bookmark.
+     * @return Optional containing the bookmark or an empty Optional if the
+     * bookmark was not found.
+     */
+    public Optional<Bookmark> findByIdAndUserId(int id, int userId) {
+        return Optional.ofNullable(
+                uniqueResult(
+                        namedQuery("Bookmark.findByIdAndUserId")
+                        .setParameter("id", id)
+                        .setParameter("userId", userId)
+                )
+        );
     }
 
     /**

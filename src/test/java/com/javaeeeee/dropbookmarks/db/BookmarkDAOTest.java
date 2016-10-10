@@ -106,9 +106,9 @@ public class BookmarkDAOTest extends DAOTest {
     public void testFindById() {
         String expectedUrl = "https://github.com/javaeeeee/DropBookmarks";
         String expectedDescription = "Repo for this project";
-        // An id of a user added by a migration
+        // An expectedId of a user added by a migration
         int userId = 1;
-        // A generated id of a bookmark
+        // A generated expectedId of a bookmark
         Integer bmId;
         Optional<Bookmark> optional;
         Bookmark bookmark;
@@ -190,7 +190,7 @@ public class BookmarkDAOTest extends DAOTest {
         String expectedUrl = "https://github.com/javaeeeee/DropBookmarks";
         String actualUrl;
         String expectedDescription = "Repo for this project";
-        // An id of a user added by a migration
+        // An expectedId of a user added by a migration
         int userId = 1;
         Integer bmID;
         Bookmark addedBookmark = new Bookmark(expectedUrl, expectedDescription);
@@ -259,9 +259,9 @@ public class BookmarkDAOTest extends DAOTest {
         String expectedUrl = "https://github.com/javaeeeee/DropBookmarks";
         String actualUrl;
         String expectedDescription = "Repo for this project";
-        // An id of a user added by a migration
+        // An expectedId of a user added by a migration
         int userId = 1;
-        // A generated id of a bookmark
+        // A generated expectedId of a bookmark
         Integer bmId;
 
         try {
@@ -358,4 +358,94 @@ public class BookmarkDAOTest extends DAOTest {
         assertNull(actualUrl);
     }
 
+    /**
+     * Test findByIdAndUserId() method
+     */
+    @Test
+    public void findByIdAndUserIdOk() {
+        Optional<Bookmark> optional;
+        final int expectedId = 1;
+        final int expectedUserId = 1;
+        //look for a bookmark
+        try {
+            ManagedSessionContext.bind(session);
+            tx = session.beginTransaction();
+
+            optional = sut.findByIdAndUserId(expectedId, expectedUserId);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            ManagedSessionContext.unbind(SESSION_FACTORY);
+            session.close();
+        }
+
+        assertNotNull(optional);
+        assertTrue(optional.isPresent());
+        assertEquals(expectedId, optional.get().getId().intValue());
+    }
+
+    /**
+     * Test findByIdAndUserId() method
+     */
+    @Test
+    public void findByIdAndUserIdWrongUserId() {
+        Optional<Bookmark> optional;
+        final int expectedId = 1;
+        final int expectedUserId = 2;
+        //look for a bookmark
+        try {
+            ManagedSessionContext.bind(session);
+            tx = session.beginTransaction();
+
+            optional = sut.findByIdAndUserId(expectedId, expectedUserId);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            ManagedSessionContext.unbind(SESSION_FACTORY);
+            session.close();
+        }
+
+        assertNotNull(optional);
+        assertFalse(optional.isPresent());
+    }
+
+    /**
+     * Test findByIdAndUserId() method
+     */
+    @Test
+    public void findByIdAndUserIdWrongId() {
+        Optional<Bookmark> optional;
+        final int expectedId = 109678;
+        final int expectedUserId = 1;
+        //look for a bookmark
+        try {
+            ManagedSessionContext.bind(session);
+            tx = session.beginTransaction();
+
+            optional = sut.findByIdAndUserId(expectedId, expectedUserId);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            ManagedSessionContext.unbind(SESSION_FACTORY);
+            session.close();
+        }
+
+        assertNotNull(optional);
+        assertFalse(optional.isPresent());
+    }
 }
