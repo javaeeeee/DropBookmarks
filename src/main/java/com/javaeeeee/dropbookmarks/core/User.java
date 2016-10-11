@@ -24,6 +24,7 @@
 package com.javaeeeee.dropbookmarks.core;
 
 import java.io.Serializable;
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -38,7 +39,6 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -57,7 +57,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "User.findByUsernameAndPassword",
             query = "SELECT u FROM User u WHERE u.username = :username "
             + "and u.password = :password")})
-public class User implements Serializable {
+public class User implements Principal, Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
@@ -128,7 +128,7 @@ public class User implements Serializable {
      *
      * @param bookmark a bookmark to add.
      */
-    public void addBookmark(Bookmark bookmark) {
+    public void addBookmark(final Bookmark bookmark) {
         Objects.requireNonNull(bookmark);
         bookmark.setUser(this);
         bookmarks.add(bookmark);
@@ -173,6 +173,16 @@ public class User implements Serializable {
                 + ", password=" + password
                 + ", bookmarks=" + bookmarks.size()
                 + '}';
+    }
+
+    /**
+     * Method implementation from Principal interface.
+     *
+     * @return
+     */
+    @Override
+    public String getName() {
+        return username;
     }
 
 }

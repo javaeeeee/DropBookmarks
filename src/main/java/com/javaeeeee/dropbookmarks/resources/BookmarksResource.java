@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -123,7 +125,8 @@ public class BookmarksResource {
      */
     @POST
     @UnitOfWork
-    public Bookmark addBookmark(Bookmark bookmark, @Auth User user) {
+    public Bookmark addBookmark(@Valid @NotNull Bookmark bookmark,
+            @Auth User user) {
         bookmark.setUser(user);
         return bookmarkDAO.save(bookmark);
     }
@@ -175,7 +178,8 @@ public class BookmarksResource {
      * @param user the id of the owner.
      * @return Bookmark
      */
-    private Bookmark findBookmarkOrTrowException(IntParam id, User user) {
+    private Bookmark findBookmarkOrTrowException(IntParam id,
+            @Auth User user) {
         Bookmark bookmark = bookmarkDAO.findByIdAndUserId(
                 id.get(), user.getId()
         ).orElseThrow(()
