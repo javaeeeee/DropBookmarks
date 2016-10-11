@@ -27,11 +27,14 @@ import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.UserDAO;
 import io.dropwizard.auth.basic.BasicCredentials;
 import java.util.Optional;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -65,6 +68,11 @@ public class DBAuthenticatorTest {
      */
     @Mock
     private UserDAO USER_DAO;
+
+    @Mock
+    SessionFactory sf;
+    @Mock
+    Session session;
     /**
      * System under test, an authenticator class in this case.
      */
@@ -75,7 +83,7 @@ public class DBAuthenticatorTest {
      */
     @Before
     public void setUp() {
-        sut = new DBAuthenticator(USER_DAO);
+        sut = new DBAuthenticator(USER_DAO, sf);
     }
 
     /**
@@ -86,6 +94,7 @@ public class DBAuthenticatorTest {
         // given
         when(USER_DAO.findByUsernameAndPassword(USERNAME, PASSWORD))
                 .thenReturn(Optional.of(USER));
+        when(sf.openSession()).thenReturn(session);
 
         // when
         Optional<User> optional = sut.authenticate(new BasicCredentials(USERNAME, PASSWORD));
@@ -105,6 +114,7 @@ public class DBAuthenticatorTest {
         // given
         when(USER_DAO.findByUsernameAndPassword(USERNAME, PASSWORD))
                 .thenReturn(Optional.empty());
+        when(sf.openSession()).thenReturn(session);
 
         // when
         Optional<User> optional

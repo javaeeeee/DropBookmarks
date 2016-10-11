@@ -178,7 +178,7 @@ public class User implements Principal, Serializable {
     /**
      * Method implementation from Principal interface.
      *
-     * @return
+     * @return The name of the Principal.
      */
     @Override
     public String getName() {

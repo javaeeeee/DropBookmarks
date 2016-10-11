@@ -88,7 +88,7 @@ THE SOFTWARE.
         </insert>
         <insert tableName="users">
             <column name="id" value="2"/>
-            <column name="username" value="javaeeeee"/>
+            <column name="username" value="Phil"/>
             <column name="password" value="p@ssw0rd"/>
         </insert>
         <rollback>

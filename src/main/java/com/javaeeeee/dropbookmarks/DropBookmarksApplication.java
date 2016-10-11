@@ -23,18 +23,25 @@
  */
 package com.javaeeeee.dropbookmarks;
 
+import com.javaeeeee.dropbookmarks.auth.DBAuthenticator;
 import com.javaeeeee.dropbookmarks.core.Bookmark;
 import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.BookmarkDAO;
 import com.javaeeeee.dropbookmarks.db.UserDAO;
+import com.javaeeeee.dropbookmarks.resources.BookmarksResource;
 import io.dropwizard.Application;
-import io.dropwizard.Configuration;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
+import io.dropwizard.auth.Authorizer;
+import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
 import io.dropwizard.db.DataSourceFactory;
-import io.dropwizard.db.PooledDataSourceFactory;
 import io.dropwizard.hibernate.HibernateBundle;
+import io.dropwizard.hibernate.UnitOfWorkAwareProxyFactory;
 import io.dropwizard.migrations.MigrationsBundle;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
+import org.hibernate.SessionFactory;
 
 /**
  * Dropwizard Application class.
@@ -86,10 +93,40 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
     @Override
     public void run(final DropBookmarksConfiguration configuration,
             final Environment environment) {
+        // Create DAOs.
         final UserDAO userDAO
                 = new UserDAO(hibernateBundle.getSessionFactory());
         final BookmarkDAO bookmarkDAO
                 = new BookmarkDAO(hibernateBundle.getSessionFactory());
+
+        // Create an authenticator which is using the backing database
+        // to check credentials.
+        final DBAuthenticator authenticator
+                = new UnitOfWorkAwareProxyFactory(hibernateBundle)
+                .create(DBAuthenticator.class,
+                        new Class<?>[]{UserDAO.class, SessionFactory.class},
+                        new Object[]{userDAO, hibernateBundle.getSessionFactory()});
+
+        // Register authenticator.
+        environment.jersey().register(new AuthDynamicFeature(
+                new BasicCredentialAuthFilter.Builder<User>()
+                .setAuthenticator(authenticator)
+                .setAuthorizer(new Authorizer<User>() {
+                    @Override
+                    public boolean authorize(User principal, String role) {
+                        return true;
+                    }
+                })
+                .setRealm("SECURITY REALM")
+                .buildAuthFilter()));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
+        //Necessary if @Auth is used to inject a custom Principal
+        // type into your resource
+        environment.jersey().register(
+                new AuthValueFactoryProvider.Binder<>(User.class));
+
+        // Register the Bookmark Resource.
+        environment.jersey().register(new BookmarksResource(bookmarkDAO));
     }
 
 }

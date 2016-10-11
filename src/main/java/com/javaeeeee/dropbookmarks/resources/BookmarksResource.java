@@ -196,6 +196,7 @@ public class BookmarksResource {
      * the id provided was not found.
      */
     @DELETE
+    @Path("/{id}")
     @UnitOfWork
     public Bookmark deleteBookmark(IntParam id, @Auth User user) {
         Bookmark bookmark
