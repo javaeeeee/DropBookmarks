@@ -38,9 +38,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
-import jersey.repackaged.com.google.common.collect.ImmutableList;
+import javax.ws.rs.NotFoundException;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
@@ -53,8 +54,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
+import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.verify;
@@ -113,7 +116,7 @@ public class BookmarksResourceTest {
                 throws AuthenticationException {
             return Optional.of(USER);
         }
-
+        
     };
 
     /**
@@ -147,12 +150,6 @@ public class BookmarksResourceTest {
             .build();
 
     /**
-     * An argument captor used to test bookmark-modifying operations.
-     */
-    @Captor
-    private ArgumentCaptor<Bookmark> argumentCaptor;
-
-    /**
      * A bookmark for testing purposes.
      */
     private Bookmark expectedBookmark;
@@ -180,7 +177,7 @@ public class BookmarksResourceTest {
         expectedBookmark = new Bookmark("https://bitbucket.org/dnoranovich/dropbookmarks", "Old project version");
         expectedBookmark.setId(2);
         bookmarks.add(expectedBookmark);
-
+        
         expectedBookmark = new Bookmark(URL, "The repository of this project");
         expectedBookmark.setId(BOOKMARK_ID);
         bookmarks.add(expectedBookmark);
@@ -224,7 +221,49 @@ public class BookmarksResourceTest {
      * Test of getBookmark method, of class BookmarksResource.
      */
     @Test
-    public void testGetBookmark() {
+    public void testGetBookmarkFound() {
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.of(expectedBookmark));
+
+        // when
+        final Optional<Bookmark> response
+                = RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<Optional<Bookmark>>() {
+                });
+
+        // then
+        verify(BOOKMARK_DAO).findByIdAndUserId(BOOKMARK_ID, USER_ID);
+        assertNotNull(response);
+        assertTrue(response.isPresent());
+        assertEquals(expectedBookmark, response.get());
+    }
+
+    /**
+     * Test of getBookmark method, of class BookmarksResource.
+     */
+    @Test(expected = NotFoundException.class)
+    public void testGetBookmarkNotFound() {
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.empty());
+
+        // when
+        final Optional<Bookmark> response
+                = RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .get(new GenericType<Optional<Bookmark>>() {
+                });
+
+        // then
+        verify(BOOKMARK_DAO).findByIdAndUserId(BOOKMARK_ID, USER_ID);
+        assertNotNull(response);
+        assertFalse(response.isPresent());
     }
 
     /**
@@ -232,20 +271,142 @@ public class BookmarksResourceTest {
      */
     @Test
     public void testAddBookmark() {
+        ArgumentCaptor<Bookmark> argumentCaptor
+                = ArgumentCaptor.forClass(Bookmark.class);
+
+        // given
+        when(BOOKMARK_DAO.save(any(Bookmark.class
+        )))
+                .thenReturn(expectedBookmark);
+
+        // when
+        final Bookmark response
+                = RULE
+                .getJerseyTest()
+                .target("/bookmarks")
+                .request(MediaType.APPLICATION_JSON)
+                .post(
+                        Entity.entity(
+                                expectedBookmark,
+                                MediaType.APPLICATION_JSON),
+                        Bookmark.class);
+        // then
+        assertNotNull(response);
+        verify(BOOKMARK_DAO)
+                .save(argumentCaptor.capture());
+        
+        Bookmark value = argumentCaptor.getValue();
+        assertNotNull(value);
+        assertNotNull(value.getUser());
+        assertEquals(value.getUser(), USER);
+        
+        assertEquals(expectedBookmark, response);
     }
 
     /**
      * Test of modifyBookmark method, of class BookmarksResource.
      */
     @Test
-    public void testModifyBookmark() {
+    public void testModifyBookmarkOK() {
+        String expectedURL = "https://github.com/javaeeeee/SpringBootBookmarks";
+        ArgumentCaptor<Bookmark> argumentCaptor
+                = ArgumentCaptor.forClass(Bookmark.class);
+
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.of(expectedBookmark));
+        when(BOOKMARK_DAO.save(expectedBookmark))
+                .thenReturn(expectedBookmark);
+
+        // when
+        Bookmark response = RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(
+                        new Bookmark(expectedURL, null),
+                        MediaType.APPLICATION_JSON),
+                        Bookmark.class);
+
+        // then
+        assertNotNull(response);
+        assertEquals(expectedURL, response.getUrl());
+        assertEquals(expectedBookmark.getDescription(),
+                response.getDescription());
+        assertEquals(expectedBookmark.getUser(),
+                response.getUser());
+        
+        verify(BOOKMARK_DAO).save(argumentCaptor.capture());
+        assertNotNull(argumentCaptor.getValue());
+        assertEquals(expectedURL, argumentCaptor.getValue().getUrl());
+        assertEquals(expectedBookmark.getDescription(),
+                argumentCaptor.getValue().getDescription());
+        assertEquals(expectedBookmark.getUser(),
+                argumentCaptor.getValue().getUser());
+    }
+
+    /**
+     * Test of modifyBookmark method, of class BookmarksResource.
+     */
+    @Test(expected = NotFoundException.class)
+    public void testModifyBookmarkNotFound() {
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.empty());
+
+        // when
+        RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(
+                        expectedBookmark,
+                        MediaType.APPLICATION_JSON),
+                        Bookmark.class);
+
+        // then
     }
 
     /**
      * Test of deleteBookmark method, of class BookmarksResource.
      */
     @Test
-    public void testDeleteBookmark() {
+    public void testDeleteBookmarkOK() {
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.of(expectedBookmark));
+
+        //when
+        Bookmark response = RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .delete(Bookmark.class);
+
+        //then
+        assertNotNull(response);
+        assertEquals(expectedBookmark, response);
+        
+        verify(BOOKMARK_DAO).delete(BOOKMARK_ID);
     }
 
+    /**
+     * Test of deleteBookmark method, of class BookmarksResource.
+     */
+    @Test(expected = NotFoundException.class)
+    public void testDeleteBookmarkNotFound() {
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.empty());
+
+        // when
+        RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .delete(Bookmark.class);
+
+        // then
+    }
+    
 }

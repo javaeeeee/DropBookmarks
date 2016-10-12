@@ -24,6 +24,7 @@
 package com.javaeeeee.dropbookmarks.resources;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.javaeeeee.dropbookmarks.core.Bookmark;
 import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.BookmarkDAO;
@@ -33,6 +34,7 @@ import io.dropwizard.jersey.params.IntParam;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -63,6 +65,7 @@ import org.slf4j.LoggerFactory;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class BookmarksResource {
+
     /**
      * Error message return in the case if PUT request body can not be parsed.
      */
@@ -153,6 +156,7 @@ public class BookmarksResource {
         Map<String, String> changeMap = null;
         try {
             changeMap = objectMapper.readValue(jsonData, HashMap.class);
+            purgeMap(changeMap);
             BeanUtils.populate(bookmark, changeMap);
             return bookmarkDAO.save(bookmark);
         } catch (IOException |
@@ -165,6 +169,23 @@ public class BookmarksResource {
         } finally {
             if (changeMap != null) {
                 changeMap.clear();
+            }
+        }
+    }
+
+    /**
+     * A method to remove null and empty values from the change map. Necessary
+     * if not fields in the changed object are filled.
+     *
+     * @param changeMap map of object field values.
+     */
+    protected void purgeMap(final Map<String, String> changeMap) {
+        changeMap.remove("id");
+        Iterator<Map.Entry<String, String>> iterator
+                = changeMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            if (Strings.isNullOrEmpty(iterator.next().getValue())) {
+                iterator.remove();
             }
         }
     }
@@ -197,7 +218,7 @@ public class BookmarksResource {
     @DELETE
     @Path("/{id}")
     @UnitOfWork
-    public Bookmark deleteBookmark(IntParam id, @Auth User user) {
+    public Bookmark deleteBookmark(@PathParam("id") IntParam id, @Auth User user) {
         Bookmark bookmark
                 = findBookmarkOrTrowException(id, user);
         bookmarkDAO.delete(id.get());

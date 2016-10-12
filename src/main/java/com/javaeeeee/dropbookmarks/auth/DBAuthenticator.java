@@ -25,13 +25,10 @@ package com.javaeeeee.dropbookmarks.auth;
 
 import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.UserDAO;
-import io.dropwizard.auth.Auth;
 import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.Authenticator;
 import io.dropwizard.auth.basic.BasicCredentials;
-import io.dropwizard.hibernate.HibernateBundle;
 import io.dropwizard.hibernate.UnitOfWork;
-import java.security.Principal;
 import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -50,14 +47,22 @@ public class DBAuthenticator implements Authenticator<BasicCredentials, User> {
      * specified exists in the application's backing database.
      */
     private final UserDAO userDAO;
-    private SessionFactory sessionFactory;
+    /**
+     * Hibernate session factory; Necessary for the authenticate method to work,
+     * which doesn't work as described in the documentation.
+     */
+    private final SessionFactory sessionFactory;
 
     /**
      * A constructor to initialize DAO.
      *
-     * @param userDAO
+     * @param userDAO The DAO for the User object necessary to look for users by
+     * their credentials.
+     * @param sessionFactory Hibernate session factory; temporary solution as
+     * database authentication doesn't work as described in documentation.
      */
-    public DBAuthenticator(UserDAO userDAO, SessionFactory sessionFactory) {
+    public DBAuthenticator(final UserDAO userDAO,
+            final SessionFactory sessionFactory) {
         this.userDAO = userDAO;
         this.sessionFactory = sessionFactory;
     }
@@ -76,7 +81,6 @@ public class DBAuthenticator implements Authenticator<BasicCredentials, User> {
     @Override
     public final Optional<User> authenticate(BasicCredentials credentials)
             throws AuthenticationException {
-        Transaction tx = null;
         Session session = sessionFactory.openSession();
         try {
             ManagedSessionContext.bind(session);
@@ -87,10 +91,7 @@ public class DBAuthenticator implements Authenticator<BasicCredentials, User> {
                             credentials.getPassword());
 
         } catch (Exception e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            throw e;
+            throw new AuthenticationException(e);
         } finally {
             ManagedSessionContext.unbind(sessionFactory);
             session.close();
