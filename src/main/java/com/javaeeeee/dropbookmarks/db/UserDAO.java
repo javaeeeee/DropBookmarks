@@ -36,6 +36,12 @@ import org.hibernate.SessionFactory;
  */
 public class UserDAO extends AbstractDAO<User> {
 
+    /**
+     * The constructor of user DAO which initializes Hibernate session factory
+     * defined by the superclass.
+     *
+     * @param sessionFactory Hibernate session factory
+     */
     public UserDAO(SessionFactory sessionFactory) {
         super(sessionFactory);
     }

@@ -34,9 +34,6 @@ import static org.junit.Assert.*;
  */
 public class BookmarkTest extends EntityTest {
 
-    public BookmarkTest() {
-    }
-
     /**
      * Test of setId method, of class Bookmark.
      */
@@ -135,7 +132,7 @@ public class BookmarkTest extends EntityTest {
                 "Project Repository URL");
         Bookmark other = new Bookmark(
                 expectedURL,
-                "Project Repository URL");;
+                "Project Repository URL");
 
         assertTrue(bookmark.equals(other));
 

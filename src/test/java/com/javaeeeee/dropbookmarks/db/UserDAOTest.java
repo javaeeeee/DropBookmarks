@@ -55,6 +55,7 @@ public class UserDAOTest extends DAOTest {
      * @throws LiquibaseException if something is wrong with Liquibase.
      */
     @Before
+    @Override
     public void setUp() throws LiquibaseException {
         liquibase.update("DEV");
         session = SESSION_FACTORY.openSession();
@@ -70,6 +71,7 @@ public class UserDAOTest extends DAOTest {
      * simultaneously.
      */
     @After
+    @Override
     public void tearDown() throws DatabaseException, LockException {
         liquibase.dropAll();
     }

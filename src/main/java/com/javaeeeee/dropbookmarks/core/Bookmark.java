@@ -94,9 +94,18 @@ public class Bookmark implements Serializable {
     @ManyToOne
     private User user;
 
+    /**
+     * A no-argument constructor.
+     */
     public Bookmark() {
     }
 
+    /**
+     * A constructor to create bookmarks using URL and description.
+     *
+     * @param url bookmark URL.
+     * @param description bookmark description.
+     */
     public Bookmark(String url, String description) {
         this.url = url;
         this.description = description;

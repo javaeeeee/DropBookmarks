@@ -39,7 +39,7 @@ import org.hibernate.boot.MetadataSources;
  */
 public class HibernateUtil {
 
-    private static final SessionFactory sessionFactory;
+    private static final SessionFactory SESSION_FACTORY;
 
     static {
         try {
@@ -51,7 +51,7 @@ public class HibernateUtil {
                     = new MetadataSources(standardRegistry)
                     .getMetadataBuilder().
                     build();
-            sessionFactory = metadata
+            SESSION_FACTORY = metadata
                     .getSessionFactoryBuilder()
                     .build();
         } catch (Throwable ex) {
@@ -67,6 +67,6 @@ public class HibernateUtil {
      * @return Hibernate session factory.
      */
     public static SessionFactory getSessionFactory() {
-        return sessionFactory;
+        return SESSION_FACTORY;
     }
 }

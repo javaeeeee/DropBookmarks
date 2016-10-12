@@ -26,12 +26,8 @@ package com.javaeeeee.dropbookmarks.core;
 import java.util.Objects;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.BeforeClass;
 
 /**
  *
@@ -50,6 +46,9 @@ public class UserTest extends EntityTest {
         user.setId(null);
     }
 
+    /**
+     * Test of setId method, of class User.
+     */
     @Test
     public void idIsOK() {
         User user = new User("Coda", "1");
@@ -60,6 +59,9 @@ public class UserTest extends EntityTest {
         assertTrue(constraintViolations.isEmpty());
     }
 
+    /**
+     * Test of the constructor of the User class.
+     */
     @Test
     public void usernameIsNull() {
         User user = new User(null, "1");
@@ -74,6 +76,9 @@ public class UserTest extends EntityTest {
                 .getMessage());
     }
 
+    /**
+     * Test of the constructor of the User class.
+     */
     @Test
     public void passwordIsNull() {
         User user = new User("Coda", null);
@@ -86,6 +91,9 @@ public class UserTest extends EntityTest {
                 .getMessage());
     }
 
+    /**
+     * Test of the constructor of the User class.
+     */
     @Test
     public void constructorOK() {
         User user = new User("Coda", "1");

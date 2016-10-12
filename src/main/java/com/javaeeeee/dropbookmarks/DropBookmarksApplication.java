@@ -48,7 +48,8 @@ import org.hibernate.SessionFactory;
  *
  * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
-public class DropBookmarksApplication extends Application<DropBookmarksConfiguration> {
+public class DropBookmarksApplication
+        extends Application<DropBookmarksConfiguration> {
 
     /**
      * Create Hibernate bundle.
@@ -64,6 +65,11 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
         }
     };
 
+    /**
+     * The application main method.
+     * @param args
+     * @throws Exception 
+     */
     public static void main(final String[] args) throws Exception {
         new DropBookmarksApplication().run(args);
     }
@@ -74,7 +80,8 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
     }
 
     @Override
-    public void initialize(final Bootstrap<DropBookmarksConfiguration> bootstrap) {
+    public void initialize(
+            final Bootstrap<DropBookmarksConfiguration> bootstrap) {
         /**
          * Adding Hibernate bundle.
          */
@@ -84,7 +91,8 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
          */
         bootstrap.addBundle(new MigrationsBundle<DropBookmarksConfiguration>() {
             @Override
-            public DataSourceFactory getDataSourceFactory(DropBookmarksConfiguration configuration) {
+            public DataSourceFactory getDataSourceFactory(
+                    DropBookmarksConfiguration configuration) {
                 return configuration.getDataSourceFactory();
             }
         });
@@ -105,18 +113,21 @@ public class DropBookmarksApplication extends Application<DropBookmarksConfigura
                 = new UnitOfWorkAwareProxyFactory(hibernateBundle)
                 .create(DBAuthenticator.class,
                         new Class<?>[]{UserDAO.class, SessionFactory.class},
-                        new Object[]{userDAO, hibernateBundle.getSessionFactory()});
+                        new Object[]{userDAO,
+                            hibernateBundle.getSessionFactory()});
 
         // Register authenticator.
         environment.jersey().register(new AuthDynamicFeature(
                 new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(authenticator)
-                .setAuthorizer(new Authorizer<User>() {
+                .setAuthorizer((User principal, String role)-> true
+                        /*
+                        new Authorizer<User>() {
                     @Override
                     public boolean authorize(User principal, String role) {
                         return true;
                     }
-                })
+                }*/)
                 .setRealm("SECURITY REALM")
                 .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);

@@ -54,9 +54,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -116,7 +114,7 @@ public class BookmarksResourceTest {
                 throws AuthenticationException {
             return Optional.of(USER);
         }
-        
+
     };
 
     /**
@@ -177,7 +175,7 @@ public class BookmarksResourceTest {
         expectedBookmark = new Bookmark("https://bitbucket.org/dnoranovich/dropbookmarks", "Old project version");
         expectedBookmark.setId(2);
         bookmarks.add(expectedBookmark);
-        
+
         expectedBookmark = new Bookmark(URL, "The repository of this project");
         expectedBookmark.setId(BOOKMARK_ID);
         bookmarks.add(expectedBookmark);
@@ -294,12 +292,12 @@ public class BookmarksResourceTest {
         assertNotNull(response);
         verify(BOOKMARK_DAO)
                 .save(argumentCaptor.capture());
-        
+
         Bookmark value = argumentCaptor.getValue();
         assertNotNull(value);
         assertNotNull(value.getUser());
         assertEquals(value.getUser(), USER);
-        
+
         assertEquals(expectedBookmark, response);
     }
 
@@ -335,7 +333,7 @@ public class BookmarksResourceTest {
                 response.getDescription());
         assertEquals(expectedBookmark.getUser(),
                 response.getUser());
-        
+
         verify(BOOKMARK_DAO).save(argumentCaptor.capture());
         assertNotNull(argumentCaptor.getValue());
         assertEquals(expectedURL, argumentCaptor.getValue().getUrl());
@@ -386,7 +384,7 @@ public class BookmarksResourceTest {
         //then
         assertNotNull(response);
         assertEquals(expectedBookmark, response);
-        
+
         verify(BOOKMARK_DAO).delete(BOOKMARK_ID);
     }
 
@@ -408,5 +406,5 @@ public class BookmarksResourceTest {
 
         // then
     }
-    
+
 }

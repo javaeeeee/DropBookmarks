@@ -93,6 +93,11 @@ public class User implements Principal, Serializable {
     public User() {
     }
 
+    /**
+     * Constructor to create users.
+     * @param username the username.
+     * @param password the password.
+     */
     public User(String username, String password) {
         this.username = username;
         this.password = password;

@@ -32,7 +32,6 @@ import io.dropwizard.hibernate.UnitOfWork;
 import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.context.internal.ManagedSessionContext;
 
 /**
