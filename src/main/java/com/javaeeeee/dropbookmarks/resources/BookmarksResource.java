@@ -63,7 +63,6 @@ import org.slf4j.LoggerFactory;
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
 public class BookmarksResource {
-
     /**
      * Error message return in the case if PUT request body can not be parsed.
      */

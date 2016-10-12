@@ -52,7 +52,8 @@ public class BookmarkDAO extends AbstractDAO<Bookmark> {
      * @return List of all bookmarks stored by the user identified by id.
      */
     public List<Bookmark> findByUserId(int id) {
-        return list(namedQuery("Bookmark.findAll"));
+        return list(namedQuery("Bookmark.findByUserId")
+                .setParameter("id", id));
     }
 
     /**
