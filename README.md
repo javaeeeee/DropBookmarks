@@ -13,3 +13,5 @@ Health Check
 ---
 
 To see your applications health enter url `http://localhost:8081/healthcheck`
+
+The version of this project for DropWizard 0.8.2 is here `https://bitbucket.org/dnoranovich/dropbookmarks`
