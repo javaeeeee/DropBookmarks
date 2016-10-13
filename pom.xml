@@ -20,7 +20,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <dropwizard.version>1.0.2</dropwizard.version>
-        <!--jersey.version></jersey.version-->
         <mainClass>com.javaeeeee.dropbookmarks.DropBookmarksApplication</mainClass>
     </properties>
 
@@ -79,7 +78,6 @@
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
             <scope>test</scope>
-            <!--version>${jersey.version}</version-->
             <exclusions>
                 <exclusion>
                     <groupId>javax.servlet</groupId>

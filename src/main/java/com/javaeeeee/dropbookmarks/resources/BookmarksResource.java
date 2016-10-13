@@ -127,8 +127,9 @@ public class BookmarksResource {
      */
     @POST
     @UnitOfWork
-    public Bookmark addBookmark(@Valid @NotNull Bookmark bookmark,
+    public Bookmark addBookmark(@Valid  Bookmark bookmark,
             @Auth User user) {
+
         bookmark.setUser(user);
         return bookmarkDAO.save(bookmark);
     }
@@ -162,7 +163,7 @@ public class BookmarksResource {
         } catch (IOException |
                 IllegalAccessException |
                 InvocationTargetException ex) {
-            LOGGER.error(WRONG_BODY_DATA_FORMAT, ex);
+            LOGGER.warn(WRONG_BODY_DATA_FORMAT, ex);
             throw new WebApplicationException(WRONG_BODY_DATA_FORMAT,
                     ex,
                     Response.Status.BAD_REQUEST);

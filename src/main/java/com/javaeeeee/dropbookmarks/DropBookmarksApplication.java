@@ -66,19 +66,30 @@ public class DropBookmarksApplication
     };
 
     /**
-     * The application main method.
+     * Application's main method.
+     *
      * @param args
-     * @throws Exception 
+     * @throws Exception
      */
     public static void main(final String[] args) throws Exception {
         new DropBookmarksApplication().run(args);
     }
 
+    /**
+     * Method returns application name.
+     *
+     * @return
+     */
     @Override
     public String getName() {
         return "DropBookmarks";
     }
 
+    /**
+     * Initializations.
+     *
+     * @param bootstrap
+     */
     @Override
     public void initialize(
             final Bootstrap<DropBookmarksConfiguration> bootstrap) {
@@ -89,7 +100,8 @@ public class DropBookmarksApplication
         /**
          * Adding migrations bundle.
          */
-        bootstrap.addBundle(new MigrationsBundle<DropBookmarksConfiguration>() {
+        bootstrap.addBundle(
+                new MigrationsBundle<DropBookmarksConfiguration>() {
             @Override
             public DataSourceFactory getDataSourceFactory(
                     DropBookmarksConfiguration configuration) {
@@ -120,14 +132,12 @@ public class DropBookmarksApplication
         environment.jersey().register(new AuthDynamicFeature(
                 new BasicCredentialAuthFilter.Builder<User>()
                 .setAuthenticator(authenticator)
-                .setAuthorizer((User principal, String role)-> true
-                        /*
-                        new Authorizer<User>() {
+                .setAuthorizer(new Authorizer<User>() {
                     @Override
                     public boolean authorize(User principal, String role) {
                         return true;
                     }
-                }*/)
+                })
                 .setRealm("SECURITY REALM")
                 .buildAuthFilter()));
         environment.jersey().register(RolesAllowedDynamicFeature.class);

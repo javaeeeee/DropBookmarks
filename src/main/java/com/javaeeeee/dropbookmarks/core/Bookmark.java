@@ -116,7 +116,6 @@ public class Bookmark implements Serializable {
     }
 
     public void setId(Integer id) {
-        Objects.requireNonNull(id);
         this.id = id;
     }
 

@@ -27,21 +27,13 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Ignore;
 
 /**
  *
  * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
 public class BookmarkTest extends EntityTest {
-
-    /**
-     * Test of setId method, of class Bookmark.
-     */
-    @Test(expected = NullPointerException.class)
-    public void testSetIdIsNull() {
-        Bookmark bookmark = new Bookmark();
-        bookmark.setId(null);
-    }
 
     /**
      * Test of setUrl method, of class Bookmark.

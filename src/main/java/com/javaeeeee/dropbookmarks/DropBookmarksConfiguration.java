@@ -43,12 +43,12 @@ public class DropBookmarksConfiguration extends Configuration {
      */
     @Valid
     @NotNull
-    private final DataSourceFactory dataSourceFactory = new DataSourceFactory();
+    private DataSourceFactory dataSourceFactory = new DataSourceFactory();
 
     /**
-     * Populate factory from the configuration file.
+     * Obtain database connection parameters from the configuration file.
      *
-     * @return
+     * @return Data source factory.
      */
     @JsonProperty("database")
     public DataSourceFactory getDataSourceFactory() {
