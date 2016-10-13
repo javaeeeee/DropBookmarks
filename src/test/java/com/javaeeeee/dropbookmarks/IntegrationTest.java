@@ -46,7 +46,7 @@ import org.junit.Test;
 import org.junit.ClassRule;
 
 /**
- * A class to test entire application.
+ * A class to test entire application. 
  *
  * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
