@@ -42,6 +42,8 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.ProcessingException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
@@ -117,7 +119,7 @@ public class BookmarksResourceTest {
                 throws AuthenticationException {
             return Optional.of(USER);
         }
-        
+
     };
 
     /**
@@ -180,7 +182,7 @@ public class BookmarksResourceTest {
                 "Old project version");
         expectedBookmark.setId(2);
         bookmarks.add(expectedBookmark);
-        
+
         expectedBookmark = new Bookmark(URL, "The repository of this project");
         expectedBookmark.setId(BOOKMARK_ID);
         bookmarks.add(expectedBookmark);
@@ -297,12 +299,12 @@ public class BookmarksResourceTest {
         assertNotNull(response);
         verify(BOOKMARK_DAO)
                 .save(argumentCaptor.capture());
-        
+
         Bookmark value = argumentCaptor.getValue();
         assertNotNull(value);
         assertNotNull(value.getUser());
         assertEquals(value.getUser(), USER);
-        
+
         assertEquals(expectedBookmark, response);
     }
 
@@ -319,7 +321,7 @@ public class BookmarksResourceTest {
                 .post(
                         Entity.json(
                                 new Bookmark(null, null)));
-        
+
         assertEquals(422, response.getStatus());
     }
 
@@ -356,7 +358,7 @@ public class BookmarksResourceTest {
                 response.getDescription());
         assertEquals(expectedBookmark.getUser(),
                 response.getUser());
-        
+
         verify(BOOKMARK_DAO).save(argumentCaptor.capture());
         assertNotNull(argumentCaptor.getValue());
         assertEquals(expectedURL, argumentCaptor.getValue().getUrl());
@@ -411,8 +413,31 @@ public class BookmarksResourceTest {
         assertNotNull(response);
         assertEquals(Response.Status.BAD_REQUEST.getStatusCode(),
                 response.getStatus());
-        
+
         verify(BOOKMARK_DAO, times(0)).save(any(Bookmark.class));
+    }
+
+    /**
+     * Test of modifyBookmark method, of class BookmarksResource.
+     */
+    @Test(expected = ProcessingException.class)
+    public void testModifyBookmarkInvalidException() {
+        String expectedKey = "wrongKey";
+
+        // given
+        when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
+                .thenReturn(Optional.of(expectedBookmark));
+
+        // when
+        Bookmark response = RULE
+                .getJerseyTest()
+                .target("/bookmarks/" + BOOKMARK_ID)
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(expectedKey,
+                        MediaType.APPLICATION_JSON))
+                .readEntity(Bookmark.class);
+
+        // then
     }
 
     /**
@@ -434,7 +459,7 @@ public class BookmarksResourceTest {
         //then
         assertNotNull(response);
         assertEquals(expectedBookmark, response);
-        
+
         verify(BOOKMARK_DAO).delete(BOOKMARK_ID);
     }
 
@@ -456,5 +481,5 @@ public class BookmarksResourceTest {
 
         // then
     }
-    
+
 }

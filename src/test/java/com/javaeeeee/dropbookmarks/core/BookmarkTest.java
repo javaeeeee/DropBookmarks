@@ -27,7 +27,6 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *

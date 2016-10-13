@@ -25,6 +25,7 @@ package com.javaeeeee.dropbookmarks.auth;
 
 import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.UserDAO;
+import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.basic.BasicCredentials;
 import java.util.Optional;
 import org.hibernate.Session;
@@ -86,6 +87,8 @@ public class DBAuthenticatorTest {
 
     /**
      * Test of authenticate method, of class DBAuthenticator.
+     *
+     * @throws java.lang.Exception
      */
     @Test
     public void testAuthenticateOk() throws Exception {
@@ -95,8 +98,8 @@ public class DBAuthenticatorTest {
         when(sf.openSession()).thenReturn(session);
 
         // when
-        Optional<User> optional = 
-                sut.authenticate(new BasicCredentials(USERNAME, PASSWORD));
+        Optional<User> optional
+                = sut.authenticate(new BasicCredentials(USERNAME, PASSWORD));
 
         // then
         verify(USER_DAO).findByUsernameAndPassword(USERNAME, PASSWORD);
@@ -107,6 +110,8 @@ public class DBAuthenticatorTest {
 
     /**
      * Test of authenticate method, of class DBAuthenticator.
+     *
+     * @throws java.lang.Exception
      */
     @Test
     public void testAuthenticateFailure() throws Exception {
@@ -124,4 +129,5 @@ public class DBAuthenticatorTest {
         assertNotNull(optional);
         assertFalse(optional.isPresent());
     }
+
 }

@@ -127,7 +127,7 @@ public class BookmarksResource {
      */
     @POST
     @UnitOfWork
-    public Bookmark addBookmark(@Valid  Bookmark bookmark,
+    public Bookmark addBookmark(@Valid @NotNull Bookmark bookmark,
             @Auth User user) {
 
         bookmark.setUser(user);

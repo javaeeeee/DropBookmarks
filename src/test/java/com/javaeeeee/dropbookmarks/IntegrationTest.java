@@ -27,7 +27,6 @@ import com.javaeeeee.dropbookmarks.core.Bookmark;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.List;
-import java.util.Optional;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -41,7 +40,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 
 /**
  * A class to test entire application.
@@ -93,8 +91,6 @@ public class IntegrationTest {
 
     /**
      * Initialization method run before all test methods.
-     *
-     * @throws java.lang.Exception
      */
     @BeforeClass
     public static void setUpClass() {
@@ -105,6 +101,8 @@ public class IntegrationTest {
 
     /**
      * Configuration method run before each test method.
+     *
+     * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
@@ -115,6 +113,8 @@ public class IntegrationTest {
 
     /**
      * Do cleanup after each method.
+     *
+     * @throws java.lang.Exception
      */
     @After
     public void tearDown() throws Exception {
