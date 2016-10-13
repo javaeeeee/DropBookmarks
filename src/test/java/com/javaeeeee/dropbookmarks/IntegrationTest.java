@@ -26,7 +26,9 @@ package com.javaeeeee.dropbookmarks;
 import com.javaeeeee.dropbookmarks.core.Bookmark;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -35,10 +37,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.After;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.ClassRule;
 
 /**
@@ -49,7 +53,7 @@ import org.junit.ClassRule;
 public class IntegrationTest {
 
     /**
-     * HTTP Status Code 422 Unprocessable Entity
+     * HTTP Status Code 422 Unprocessable Entity. Used to test validation.
      */
     private static final int UNPROCESSABLE_ENTITY_HTTP_RESPONSE_CODE = 422;
     /**
@@ -259,6 +263,133 @@ public class IntegrationTest {
 
         assertNotNull(response);
         assertNotNull(response.getId());
+        assertEquals(expectedURL, response.getUrl());
+    }
+
+    /**
+     * Test delete bookmark method.
+     */
+    @Test
+    public void deleteBookmarkUnauthorized() {
+        Response response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("1")
+                .request(MediaType.APPLICATION_JSON)
+                .delete();
+
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(),
+                response.getStatus());
+    }
+
+    /**
+     * Test delete bookmark method.
+     */
+    @Test
+    public void deleteBookmarkNotFound() {
+        client.register(FEATURE);
+        Response response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("109678")
+                .request(MediaType.APPLICATION_JSON)
+                .delete();
+
+        assertNotNull(response);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(),
+                response.getStatus());
+    }
+
+    /**
+     * Test delete bookmark method.
+     */
+    @Test
+    public void deleteBookmarkOk() {
+        int expestedId = 1;
+        client.register(FEATURE);
+        Bookmark response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path(String.valueOf(expestedId))
+                .request(MediaType.APPLICATION_JSON)
+                .delete(Bookmark.class);
+
+        assertNotNull(response);
+        assertEquals(expestedId, response.getId().intValue());
+    }
+
+    /**
+     * Test modify bookmark method.
+     */
+    @Test
+    public void modifyBookmarkUnauthorized() {
+        Response response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("1")
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(
+                        new Bookmark("http://localhost:8080", "localhost"),
+                        MediaType.APPLICATION_JSON));
+
+        assertNotNull(response);
+        assertEquals(Response.Status.UNAUTHORIZED.getStatusCode(),
+                response.getStatus());
+    }
+
+    /**
+     * Test modify bookmark method.
+     */
+    @Test
+    public void modifyBookmarkNotFound() {
+        client.register(FEATURE);
+        Response response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("109678")
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(
+                        new Bookmark("http://localhost:8080", "localhost"),
+                        MediaType.APPLICATION_JSON));
+
+        assertNotNull(response);
+        assertEquals(Response.Status.NOT_FOUND.getStatusCode(),
+                response.getStatus());
+    }
+
+    /**
+     * Test modify bookmark method.
+     */
+    @Test
+    public void modifyBookmarkInvalid() {
+        String data = "UNPROCESSABLE_ENTITY";
+        client.register(FEATURE);
+        Response response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("1")
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.entity(data,
+                        MediaType.APPLICATION_JSON));
+
+        assertNotNull(response);
+        assertEquals(Response.Status.BAD_REQUEST.getStatusCode(),
+                response.getStatus());
+    }
+
+    /**
+     * Test modify bookmark method.
+     */
+    @Test
+    public void modifyBookmarkOK() {
+        String expectedURL
+                = "https://github.com/javaeeeee/SpringBootBookmarks";
+        Map<String, String> data = new HashMap<>();
+        data.put("url", "https://github.com/javaeeeee/SpringBootBookmarks");
+        client.register(FEATURE);
+        Bookmark response = client.target(target)
+                .path(BOOKMARK_PATH)
+                .path("1")
+                .request(MediaType.APPLICATION_JSON)
+                .put(Entity.json(data))
+                .readEntity(Bookmark.class);
+
+        assertNotNull(response);
         assertEquals(expectedURL, response.getUrl());
     }
 }

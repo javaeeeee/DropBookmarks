@@ -175,6 +175,25 @@ public class BookmarksResource {
     }
 
     /**
+     * A method to remove bookmarks.
+     *
+     * @param id the id of a bookmark to be deleted.
+     * @param user Authenticated user with whose bookmarks we work.
+     * @return Removed bookmark data or throws an exception if the bookmark with
+     * the id provided was not found.
+     */
+    @DELETE
+    @Path("/{id}")
+    @UnitOfWork
+    public Bookmark deleteBookmark(@PathParam("id") IntParam id,
+            @Auth User user) {
+        Bookmark bookmark
+                = findBookmarkOrTrowException(id, user);
+        bookmarkDAO.delete(id.get());
+        return bookmark;
+    }
+
+    /**
      * A method to remove null and empty values from the change map. Necessary
      * if not fields in the changed object are filled.
      *
@@ -208,21 +227,4 @@ public class BookmarksResource {
         return bookmark;
     }
 
-    /**
-     * A method to remove bookmarks.
-     *
-     * @param id the id of a bookmark to be deleted.
-     * @param user Authenticated user with whose bookmarks we work.
-     * @return Removed bookmark data or throws an exception if the bookmark with
-     * the id provided was not found.
-     */
-    @DELETE
-    @Path("/{id}")
-    @UnitOfWork
-    public Bookmark deleteBookmark(@PathParam("id") IntParam id, @Auth User user) {
-        Bookmark bookmark
-                = findBookmarkOrTrowException(id, user);
-        bookmarkDAO.delete(id.get());
-        return bookmark;
-    }
 }
