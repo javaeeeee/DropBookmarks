@@ -20,7 +20,7 @@ The API is secured with Basic Authentication. One can find a user *javaeeeee*
 whose password is *p@ssw0rd* along with several bookmarks in the database after 
 executing the migrations.
 
-To get the list of all bookmarks stored by javaeeeee enter
+To get the list of all bookmarks stored by *javaeeeee* enter
 
 ~~~~
 curl -w "\n" 2>/dev/null localhost:8080/bookmarks -u javaeeeee:p@ssw0rd
