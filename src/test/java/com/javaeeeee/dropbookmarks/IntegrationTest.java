@@ -29,12 +29,14 @@ import io.dropwizard.testing.junit.DropwizardAppRule;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.net.ssl.SSLContext;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.glassfish.jersey.SslConfigurator;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
@@ -46,7 +48,7 @@ import org.junit.Test;
 import org.junit.ClassRule;
 
 /**
- * A class to test entire application. 
+ * A class to test entire application.
  *
  * @author Dmitry Noranovich javaeeeee (at) gmail (dot) com
  */
@@ -88,6 +90,19 @@ public class IntegrationTest {
      */
     private static final String BOOKMARK_PATH
             = "/bookmarks";
+
+    /**
+     * The path to the key store which is necessary for HTTPS support.
+     */
+    private static final String TRUST_STORE_FILE_NAME
+            = "dropbookmarks.keystore";
+
+    /**
+     * The password of the key store.
+     */
+    private static final String TRUST_STORE_PASSWORD
+            = "p@ssw0rd";
+
     /**
      * Jersey client to access resources.
      */
@@ -98,7 +113,7 @@ public class IntegrationTest {
      */
     @BeforeClass
     public static void setUpClass() {
-        target = String.format("http://localhost:%d",
+        target = String.format("https://localhost:%d",
                 RULE.getLocalPort());
 
     }
@@ -112,7 +127,14 @@ public class IntegrationTest {
     public void setUp() throws Exception {
         RULE.getApplication()
                 .run("db", "migrate", "-i TEST", CONFIG_PATH);
-        client = ClientBuilder.newClient();
+        SslConfigurator configurator
+                = SslConfigurator.newInstance();
+        configurator.trustStoreFile(TRUST_STORE_FILE_NAME)
+                .trustStorePassword(TRUST_STORE_PASSWORD);
+        SSLContext context = configurator.createSSLContext();
+        client = ClientBuilder.newBuilder()
+                .sslContext(context)
+                .build();
     }
 
     /**

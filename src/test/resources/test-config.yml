@@ -15,3 +15,13 @@ database:
 
   # the JDBC URL
   url: jdbc:h2:mem:db1;DB_CLOSE_DELAY=-1
+
+# Enable HTTPS
+server:
+    applicationConnectors:
+        - type: https
+          port: 0
+          keyStorePath: dropbookmarks.keystore
+          keyStorePassword: p@ssw0rd
+          validateCerts: false
+          validatePeers: false

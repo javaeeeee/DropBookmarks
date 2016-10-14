@@ -12,7 +12,18 @@ database:
     
     # the JDBC URL
     url: jdbc:mysql://localhost:3306/dropbookmarks
-    
+
+# Enable HTTPS
+server:
+    applicationConnectors:
+        - type: https
+          port: 8443
+          keyStorePath: dropbookmarks.keystore
+          keyStorePassword: p@ssw0rd
+          validateCerts: false
+          validatePeers: false
+
+# Logging settings    
 logging:
   level: INFO
   loggers:
