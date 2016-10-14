@@ -81,7 +81,21 @@ public class UserDAO extends AbstractDAO<User> {
      * @param id the id of a user.
      * @return The user characterized by the id passed to the method.
      */
-    Optional<User> findById(Integer id) {
+    public Optional<User> findById(Integer id) {
         return Optional.ofNullable(get(id));
+    }
+
+    /**
+     * Method looks for a user by username.
+     *
+     * @param username username used for login.
+     * @return An Optional containing the user if found or empty otherwise.
+     */
+    public Optional<User> findByUsername(String username) {
+        return Optional.ofNullable(
+                uniqueResult(
+                        namedQuery("User.findByUsername")
+                        .setParameter("username", username)
+                ));
     }
 }

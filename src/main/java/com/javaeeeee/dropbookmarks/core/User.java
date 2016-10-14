@@ -23,6 +23,7 @@
  */
 package com.javaeeeee.dropbookmarks.core;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import java.security.Principal;
 import java.util.HashSet;
@@ -56,7 +57,9 @@ import javax.xml.bind.annotation.XmlRootElement;
             query = "SELECT u FROM User u WHERE u.id = :id"),
     @NamedQuery(name = "User.findByUsernameAndPassword",
             query = "SELECT u FROM User u WHERE u.username = :username "
-            + "and u.password = :password")})
+            + "and u.password = :password"),
+    @NamedQuery(name = "User.findByUsername",
+            query = "SELECT u FROM User u WHERE u.username = :username")})
 public class User implements Principal, Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -76,6 +79,7 @@ public class User implements Principal, Serializable {
     /**
      * User's password.
      */
+    @JsonIgnore
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
@@ -95,6 +99,7 @@ public class User implements Principal, Serializable {
 
     /**
      * Constructor to create users.
+     *
      * @param username the username.
      * @param password the password.
      */

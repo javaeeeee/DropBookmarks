@@ -200,4 +200,69 @@ public class UserDAOTest extends DAOTest {
 
     }
 
+    /**
+     * Test of findByUsername method, of class UserDAO.
+     */
+    @Test
+    public void testFindByUsername() {
+        String expectedUsername = "user1";
+        String expectedPassword = "pwd1";
+
+        Optional<User> user;
+
+        //First
+        try {
+            ManagedSessionContext.bind(session);
+            tx = session.beginTransaction();
+
+            //Do something here with UserDAO
+            session
+                    .createSQLQuery(
+                            "insert into users "
+                            + "values(null, :username, :password)"
+                    )
+                    .setString("username", expectedUsername)
+                    .setString("password", expectedPassword)
+                    .executeUpdate();
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            ManagedSessionContext.unbind(SESSION_FACTORY);
+            session.close();
+        }
+
+        //Reopen session
+        session = SESSION_FACTORY.openSession();
+        tx = null;
+
+        //Second
+        try {
+            ManagedSessionContext.bind(session);
+            tx = session.beginTransaction();
+
+            //Do something here with UserDAO
+            user = sut.findByUsername(expectedUsername);
+
+            tx.commit();
+        } catch (Exception e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            throw e;
+        } finally {
+            ManagedSessionContext.unbind(SESSION_FACTORY);
+            session.close();
+        }
+
+        Assert.assertNotNull(user);
+        Assert.assertTrue(user.isPresent());
+        Assert.assertEquals(expectedUsername,
+                user.get().getUsername());
+    }
+
 }

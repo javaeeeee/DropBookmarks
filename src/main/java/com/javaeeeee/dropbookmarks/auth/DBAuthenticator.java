@@ -33,6 +33,8 @@ import java.util.Optional;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.context.internal.ManagedSessionContext;
+import org.jasypt.util.password.BasicPasswordEncryptor;
+import org.jasypt.util.password.PasswordEncryptor;
 
 /**
  * Class for authenticating users using backing database.
@@ -51,6 +53,11 @@ public class DBAuthenticator implements Authenticator<BasicCredentials, User> {
      * which doesn't work as described in the documentation.
      */
     private final SessionFactory sessionFactory;
+    /**
+     * A helper class for password encryption; Thread-safe.
+     */
+    private final PasswordEncryptor passwordEncryptor
+            = new BasicPasswordEncryptor();
 
     /**
      * A constructor to initialize DAO.
@@ -81,13 +88,23 @@ public class DBAuthenticator implements Authenticator<BasicCredentials, User> {
     public final Optional<User> authenticate(BasicCredentials credentials)
             throws AuthenticationException {
         Session session = sessionFactory.openSession();
+        Optional<User> result;
         try {
             ManagedSessionContext.bind(session);
 
-            return userDAO
-                    .findByUsernameAndPassword(
-                            credentials.getUsername(),
-                            credentials.getPassword());
+            result = userDAO.findByUsername(credentials.getUsername());
+
+            if (!result.isPresent()) {
+                return result;
+            } else               {
+                if (passwordEncryptor.checkPassword(
+                        credentials.getPassword(),
+                        result.get().getPassword())) {
+                    return result;
+                } else {
+                    return Optional.empty();
+                }
+            }
 
         } catch (Exception e) {
             throw new AuthenticationException(e);

@@ -25,7 +25,6 @@ package com.javaeeeee.dropbookmarks.auth;
 
 import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.UserDAO;
-import io.dropwizard.auth.AuthenticationException;
 import io.dropwizard.auth.basic.BasicCredentials;
 import java.util.Optional;
 import org.hibernate.Session;
@@ -59,19 +58,29 @@ public class DBAuthenticatorTest {
      */
     private static final String PASSWORD = "HALE";
     /**
+     * Encoded password.
+     */
+    private static final String HASHED_PASSWORD
+            = "WR1sXzZRJFSBurV6itaZRrgN/m+sKedr";
+    /**
      * A test user.
      */
-    private static final User USER = new User(USERNAME, PASSWORD);
+    private static final User USER = new User(USERNAME, HASHED_PASSWORD);
     /**
      * User DAO mock.
      */
     @Mock
     private UserDAO USER_DAO;
-
+    /**
+     * Hibernate session factory.
+     */
     @Mock
-    SessionFactory sf;
+    private SessionFactory sf;
+    /**
+     * Hibernate session.
+     */
     @Mock
-    Session session;
+    private Session session;
     /**
      * System under test, an authenticator class in this case.
      */
@@ -93,7 +102,7 @@ public class DBAuthenticatorTest {
     @Test
     public void testAuthenticateOk() throws Exception {
         // given
-        when(USER_DAO.findByUsernameAndPassword(USERNAME, PASSWORD))
+        when(USER_DAO.findByUsername(USERNAME))
                 .thenReturn(Optional.of(USER));
         when(sf.openSession()).thenReturn(session);
 
@@ -102,7 +111,7 @@ public class DBAuthenticatorTest {
                 = sut.authenticate(new BasicCredentials(USERNAME, PASSWORD));
 
         // then
-        verify(USER_DAO).findByUsernameAndPassword(USERNAME, PASSWORD);
+        verify(USER_DAO).findByUsername(USERNAME);
         assertNotNull(optional);
         assertTrue(optional.isPresent());
         assertEquals(USERNAME, optional.get().getUsername());
@@ -116,7 +125,7 @@ public class DBAuthenticatorTest {
     @Test
     public void testAuthenticateFailure() throws Exception {
         // given
-        when(USER_DAO.findByUsernameAndPassword(USERNAME, PASSWORD))
+        when(USER_DAO.findByUsername(USERNAME))
                 .thenReturn(Optional.empty());
         when(sf.openSession()).thenReturn(session);
 
@@ -125,9 +134,30 @@ public class DBAuthenticatorTest {
                 = sut.authenticate(new BasicCredentials(USERNAME, PASSWORD));
 
         // then
-        verify(USER_DAO).findByUsernameAndPassword(USERNAME, PASSWORD);
+        verify(USER_DAO).findByUsername(USERNAME);
         assertNotNull(optional);
         assertFalse(optional.isPresent());
     }
 
+    /**
+     * Test of authenticate method, of class DBAuthenticator.
+     *
+     * @throws java.lang.Exception
+     */
+    @Test
+    public void testAuthenticateWrongPassword() throws Exception {
+        // given
+        when(USER_DAO.findByUsername(USERNAME))
+                .thenReturn(Optional.of(USER));
+        when(sf.openSession()).thenReturn(session);
+
+        // when
+        Optional<User> optional
+                = sut.authenticate(new BasicCredentials(USERNAME, "p@ssw0rd"));
+
+        // then
+        verify(USER_DAO).findByUsername(USERNAME);
+        assertNotNull(optional);
+        assertFalse(optional.isPresent());
+    }
 }
