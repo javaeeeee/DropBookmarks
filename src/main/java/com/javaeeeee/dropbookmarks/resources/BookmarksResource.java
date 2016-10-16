@@ -201,13 +201,9 @@ public class BookmarksResource {
      */
     protected void purgeMap(final Map<String, String> changeMap) {
         changeMap.remove("id");
-        Iterator<Map.Entry<String, String>> iterator
-                = changeMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            if (Strings.isNullOrEmpty(iterator.next().getValue())) {
-                iterator.remove();
-            }
-        }
+        changeMap.entrySet().removeIf(
+                entry -> Strings.isNullOrEmpty(entry.getValue())
+        );
     }
 
     /**

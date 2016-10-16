@@ -36,7 +36,9 @@ import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.GenericType;
@@ -481,4 +483,23 @@ public class BookmarksResourceTest {
         // then
     }
 
+    /**
+     * Test of purgeMap() method
+     */
+    @Test
+    public void testPurgeMap() {
+        String expectedKey = "url";
+        BookmarksResource sut = new BookmarksResource(BOOKMARK_DAO);
+        Map<String, String> map = new HashMap<>();
+        map.put("id", "1");
+        map.put(expectedKey, "http://www.dropwizard.io/1.0.2/docs/");
+        map.put("description", null);
+
+        sut.purgeMap(map);
+
+        assertNotNull(map);
+        assertFalse(map.isEmpty());
+        assertEquals(1, map.size());
+        assertTrue(map.containsKey(expectedKey));
+    }
 }
