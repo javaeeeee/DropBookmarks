@@ -111,19 +111,6 @@ public class BookmarksResourceTest {
             = HttpAuthenticationFeature.basic(USERNAME, PASSWORD);
 
     /**
-     * Fake authenticator.
-     */
-    public static final Authenticator<BasicCredentials, User> AUTHENTICATOR
-            = new Authenticator<BasicCredentials, User>() {
-        @Override
-        public Optional<User> authenticate(BasicCredentials credentials)
-                throws AuthenticationException {
-            return Optional.of(USER);
-        }
-
-    };
-
-    /**
      * Basic authentication filter based on fake authenticator.
      */
     private static final BasicCredentialAuthFilter FILTER
