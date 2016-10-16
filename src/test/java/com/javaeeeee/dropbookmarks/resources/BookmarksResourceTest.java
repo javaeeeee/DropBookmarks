@@ -128,13 +128,8 @@ public class BookmarksResourceTest {
      */
     private static final BasicCredentialAuthFilter FILTER
             = new BasicCredentialAuthFilter.Builder<User>()
-            .setAuthenticator(AUTHENTICATOR)
-            .setAuthorizer(new Authorizer<User>() {
-                @Override
-                public boolean authorize(User principal, String role) {
-                    return true;
-                }
-            })
+            .setAuthenticator(credentials -> Optional.of(USER))
+            .setAuthorizer((principal, role) -> true)
             .setRealm("SECURITY REALM")
             .buildAuthFilter();
 
