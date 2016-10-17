@@ -96,7 +96,7 @@ public class BookmarkTest extends EntityTest {
         Bookmark other = bookmark;
 
         assertTrue(bookmark.equals(other));
-
+        assertEquals(bookmark.hashCode(), other.hashCode());
     }
 
     /**
@@ -126,7 +126,7 @@ public class BookmarkTest extends EntityTest {
                 "Project Repository URL");
 
         assertTrue(bookmark.equals(other));
-
+        assertEquals(bookmark.hashCode(), other.hashCode());
     }
 
     /**
@@ -149,6 +149,7 @@ public class BookmarkTest extends EntityTest {
         other.setUser(u2);
 
         assertFalse(bookmark.equals(other));
+        assertNotEquals(bookmark.hashCode(), other.hashCode());
     }
 
 }

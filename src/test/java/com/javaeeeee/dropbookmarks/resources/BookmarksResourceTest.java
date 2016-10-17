@@ -28,11 +28,7 @@ import com.javaeeeee.dropbookmarks.core.User;
 import com.javaeeeee.dropbookmarks.db.BookmarkDAO;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
-import io.dropwizard.auth.AuthenticationException;
-import io.dropwizard.auth.Authenticator;
-import io.dropwizard.auth.Authorizer;
 import io.dropwizard.auth.basic.BasicCredentialAuthFilter;
-import io.dropwizard.auth.basic.BasicCredentials;
 import io.dropwizard.testing.junit.ResourceTestRule;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -52,6 +48,7 @@ import org.glassfish.jersey.test.grizzly.GrizzlyWebTestContainerFactory;
 import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import org.junit.Before;
@@ -318,10 +315,14 @@ public class BookmarksResourceTest {
         ArgumentCaptor<Bookmark> argumentCaptor
                 = ArgumentCaptor.forClass(Bookmark.class);
 
+        Bookmark bookmarkWithModifications
+                = new Bookmark(expectedURL, null);
+        bookmarkWithModifications.setId(109678);
+
         // given
         when(BOOKMARK_DAO.findByIdAndUserId(BOOKMARK_ID, USER_ID))
                 .thenReturn(Optional.of(expectedBookmark));
-        when(BOOKMARK_DAO.save(expectedBookmark))
+        when(BOOKMARK_DAO.save(any(Bookmark.class)))
                 .thenReturn(expectedBookmark);
 
         // when
@@ -330,7 +331,7 @@ public class BookmarksResourceTest {
                 .target("/bookmarks/" + BOOKMARK_ID)
                 .request(MediaType.APPLICATION_JSON)
                 .put(Entity.entity(
-                        new Bookmark(expectedURL, null),
+                        bookmarkWithModifications,
                         MediaType.APPLICATION_JSON),
                         Bookmark.class);
 
@@ -345,10 +346,14 @@ public class BookmarksResourceTest {
         verify(BOOKMARK_DAO).save(argumentCaptor.capture());
         assertNotNull(argumentCaptor.getValue());
         assertEquals(expectedURL, argumentCaptor.getValue().getUrl());
+        assertNotEquals(URL, argumentCaptor.getValue().getUrl());
         assertEquals(expectedBookmark.getDescription(),
                 argumentCaptor.getValue().getDescription());
         assertEquals(expectedBookmark.getUser(),
                 argumentCaptor.getValue().getUser());
+        // Check that purgeMap was called.
+        assertEquals(BOOKMARK_ID,
+                argumentCaptor.getValue().getId().intValue());
     }
 
     /**
