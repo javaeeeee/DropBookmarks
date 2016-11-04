@@ -148,3 +148,6 @@ hs_err_pid*
 
 # Keystore #
 *.keystore
+
+# jMeter
+jmeter/

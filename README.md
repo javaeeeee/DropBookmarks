@@ -5,8 +5,10 @@ application is using MySql as a DBMS.
 
 Database settings are in the config.yml file. To switch to another RDBMS one 
 should modify the driver and connection URL. By default it is necessary to create 
-DropBookmarks database and it will be populated using migrations.
-
+DropBookmarks database and it will be populated using migrations.  
+  
+A brief [video introduction to DropWizard](https://youtu.be/l1TD2sYEgc8).  
+  
 How to start the DropBookmarks application
 ---
 
