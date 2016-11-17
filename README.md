@@ -20,7 +20,10 @@ How to start the DropBookmarks application
 3. To populate the database run `java -jar target/DropBookmarks-1.0-SNAPSHOT.jar db migrate -i TEST config.yml` 
 4. Start application with `java -jar target/DropBookmarks-1.0-SNAPSHOT.jar server config.yml`
 5. To check that your application is running, enter URL `http://localhost:8081` in the browser 
-
+  
+How to try the DropBookmarks application
+---
+  
 The API is secured with Basic Authentication. One can find a user *javaeeeee*
 whose password is *p@ssw0rd* along with several bookmarks in the database after 
 executing the migrations.
